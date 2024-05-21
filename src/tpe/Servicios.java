@@ -18,7 +18,8 @@ public class Servicios {
 	private HashMap<String, Tarea> tareas;
 
 	/*
-     * Expresar la complejidad temporal del constructor.
+     * Complejidad del constructor:
+     * 0(m + n) donde m es el numero de procesadores y n es el numero de tareas.
      */
 	public Servicios(String pathProcesadores, String pathTareas) {
 		CSVReader reader = new CSVReader();
@@ -30,7 +31,7 @@ public class Servicios {
 	}
 
 	/*
-     * Expresar la complejidad temporal del servicio 1.
+     * Complejidad:
      * 0(1)
      */
 	public Tarea servicio1(String ID) {
@@ -38,8 +39,8 @@ public class Servicios {
 	}
     
     /*
-     * Expresar la complejidad temporal del servicio 2.
-     * o(n) donde n es el número total de tareas
+     * Complejidad:
+     * O(n) donde n es el número total de tareas.
      */
 	public List<Tarea> servicio2(boolean esCritica) {
 		List<Tarea> tareasFiltradas  = new LinkedList<>();
@@ -52,7 +53,8 @@ public class Servicios {
 	}
 
     /*
-     * Expresar la complejidad temporal del servicio 3.
+     * Complejidad:
+     * O(n) donde n es el numero total de tareas
      */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		List<Tarea> tareasFiltradas = new LinkedList<>();
@@ -63,7 +65,6 @@ public class Servicios {
 			}
 		}
 		return tareasFiltradas;
-
 	}
 
 }
