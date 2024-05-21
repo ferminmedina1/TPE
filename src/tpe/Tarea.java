@@ -4,8 +4,17 @@ public class Tarea {
     private String id_tarea;
     private String nombre_tarea;
     private int tiempo_ejecucion;
-    private boolean critica;
+    private Boolean critica;
     private int nivel_prioridad;
+
+
+    public Tarea(String id_tarea, String nombre_tarea, int tiempo_ejecucion, Boolean critica, int nivel_prioridad) {
+        this.id_tarea = id_tarea;
+        this.nombre_tarea = nombre_tarea;
+        this.tiempo_ejecucion = tiempo_ejecucion;
+        this.critica = critica;
+        this.nivel_prioridad = nivel_prioridad;
+    }
 
     public boolean isCritica() {
         return critica;
@@ -21,12 +30,6 @@ public class Tarea {
 
     public void setNivelprioridad(int nivel_prioridad) {
         this.nivel_prioridad = nivel_prioridad;
-    }
-
-    public Tarea(String id_tarea, String nombre_tarea, int tiempo_ejecucion) {
-        this.id_tarea = id_tarea;
-        this.nombre_tarea = nombre_tarea;
-        this.tiempo_ejecucion = tiempo_ejecucion;
     }
 
     public String getIdTarea() {
@@ -51,6 +54,17 @@ public class Tarea {
 
     public void setTiempoEjecucion(int tiempo_ejecucion) {
         this.tiempo_ejecucion = tiempo_ejecucion;
+    }
+
+    @Override
+    public String toString() {
+        return "Tarea{" +
+                "id_tarea='" + id_tarea + '\'' +
+                ", nombre_tarea='" + nombre_tarea + '\'' +
+                ", tiempo_ejecucion=" + tiempo_ejecucion +
+                ", critica=" + critica +
+                ", nivel_prioridad=" + nivel_prioridad +
+                '}';
     }
 }
 

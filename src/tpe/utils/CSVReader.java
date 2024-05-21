@@ -1,16 +1,24 @@
 package tpe.utils;
 
+import tpe.Procesador;
+import tpe.Tarea;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 
 
 public class CSVReader {
+	private HashMap<String, Tarea> tareas;
+	private HashMap<String, Procesador> procesadores;
 
 	public CSVReader() {
+		tareas = new HashMap<>();
+		procesadores = new HashMap<>();
 	}
 	
 	public void readTasks(String taskPath) {
@@ -28,11 +36,16 @@ public class CSVReader {
 			Boolean critica = Boolean.parseBoolean(line[3].trim());
 			Integer prioridad = Integer.parseInt(line[4].trim());
 			// Aca instanciar lo que necesiten en base a los datos leidos
+			Tarea tarea = new Tarea(id, nombre, tiempo, critica, prioridad );
+			tareas.put(id, tarea);
 		}
-		
 	}
-	
-public void readProcessors(String processorPath) {
+
+	public HashMap<String, Tarea> getTareas() {
+		return new HashMap<>(tareas);
+	}
+
+	public void readProcessors(String processorPath) {
 		
 		// Obtengo una lista con las lineas del archivo
 		// lines.get(0) tiene la primer linea del archivo
@@ -46,8 +59,13 @@ public void readProcessors(String processorPath) {
 			Boolean refrigerado = Boolean.parseBoolean(line[2].trim());
 			Integer anio = Integer.parseInt(line[3].trim());
 			// Aca instanciar lo que necesiten en base a los datos leidos
+			Procesador procesador = new Procesador(id, codigo, refrigerado, anio);
+			procesadores.put(id, procesador);
 		}
-		
+	}
+
+	public HashMap<String, Procesador> getProcesadores() {
+		return new HashMap<>(procesadores);
 	}
 
 	private ArrayList<String[]> readContent(String path) {

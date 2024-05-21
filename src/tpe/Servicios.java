@@ -24,6 +24,9 @@ public class Servicios {
 		CSVReader reader = new CSVReader();
 		reader.readProcessors(pathProcesadores);
 		reader.readTasks(pathTareas);
+		procesadores = new HashMap<>(reader.getProcesadores());
+		tareas = new HashMap<>(reader.getTareas());
+
 	}
 
 	/*
@@ -55,7 +58,7 @@ public class Servicios {
 		List<Tarea> tareasFiltradas = new LinkedList<>();
 		for (Tarea tarea: this.tareas.values()) {
 			int prioridad = tarea.getNivelprioridad();
-			if (prioridad >= prioridadInferior || prioridad <= prioridadSuperior) {
+			if (prioridad >= prioridadInferior && prioridad <= prioridadSuperior) {
 				tareasFiltradas.add(tarea);
 			}
 		}

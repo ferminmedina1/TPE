@@ -2,11 +2,11 @@ package tpe;
 
 public class Procesador {
     private String id_procesador;
-    private int cod_procesador;
+    private String cod_procesador;
     private boolean is_refrigerado;
     private int anio_funcionamiento;
 
-    public Procesador(String id_procesador, int cod_procesador, boolean is_refrigerado, int anio_funcionamiento) {
+    public Procesador(String id_procesador, String cod_procesador, boolean is_refrigerado, int anio_funcionamiento) {
         this.id_procesador = id_procesador;
         this.cod_procesador = cod_procesador;
         this.is_refrigerado = is_refrigerado;
@@ -21,7 +21,7 @@ public class Procesador {
         this.id_procesador = id_procesador;
     }
 
-    public void setCod_procesador(int cod_procesador) {
+    public void setCod_procesador(String cod_procesador) {
         this.cod_procesador = cod_procesador;
     }
 
@@ -33,7 +33,7 @@ public class Procesador {
         this.anio_funcionamiento = anio_funcionamiento;
     }
 
-    public int getCod_procesador() {
+    public String getCod_procesador() {
         return cod_procesador;
     }
 
@@ -43,5 +43,15 @@ public class Procesador {
 
     public int getAnio_funcionamiento() {
         return anio_funcionamiento;
+    }
+
+    @Override
+    public String toString() {
+        return "Procesador{" +
+                "id_procesador='" + id_procesador + '\'' +
+                ", cod_procesador=" + cod_procesador +
+                ", is_refrigerado=" + is_refrigerado +
+                ", anio_funcionamiento=" + anio_funcionamiento +
+                '}';
     }
 }
