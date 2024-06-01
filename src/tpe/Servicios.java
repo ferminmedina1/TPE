@@ -16,6 +16,10 @@ public class Servicios {
 
 	private HashMap<String, Procesador > procesadores;
 	private HashMap<String, Tarea> tareas;
+	private LinkedList<Tarea> listaTareas;
+	private LinkedList<Procesador> listaProcesadores;
+	private LinkedList<Procesador> mejorSolucion;
+	int mejorTiempo;
 
 	/*
      * Complejidad del constructor:
@@ -27,7 +31,10 @@ public class Servicios {
 		reader.readTasks(pathTareas);
 		procesadores = new HashMap<>(reader.getProcesadores());
 		tareas = new HashMap<>(reader.getTareas());
-
+		listaTareas = new LinkedList<>(reader.getTareas().values());
+		listaProcesadores = new LinkedList<>(reader.getProcesadores().values());
+		mejorTiempo = 0;
+		mejorSolucion = new LinkedList<>();
 	}
 
 	/*
@@ -65,6 +72,46 @@ public class Servicios {
 			}
 		}
 		return tareasFiltradas;
+	}
+
+	//Parte 2
+
+	public LinkedList<Procesador> asignarTareasAProcesadores() {
+		return asignarTareasAProcesadores(this.listaTareas, 0);
+	}
+
+	private LinkedList<Procesador> asignarTareasAProcesadores(LinkedList<Tarea> tareas, int indexTarea) {
+		if (indexTarea >= tareas.size()) {
+			int tiempoMaximo = getTiempoMaximo(listaProcesadores);
+			if (tiempoMaximo < mejorTiempo || mejorTiempo == 0 ) {
+				mejorTiempo = tiempoMaximo;
+				mejorSolucion.clear();
+				//debo clonar los procesadores a mi mejorSolucion para guaradar el resultado y que no se pierda
+				for (Procesador procesador : listaProcesadores) {
+					mejorSolucion.add(procesador.clonar());
+				}
+				System.out.println("Nueva mejor solución encontrada: " + mejorSolucion);
+			}
+			return mejorSolucion;
+		}
+
+		Tarea tarea = tareas.get(indexTarea);
+
+		for (Procesador procesador : this.listaProcesadores) {
+			procesador.addTarea(tarea);
+			asignarTareasAProcesadores(tareas, indexTarea + 1);
+			procesador.deleteTarea(tarea);
+		}
+		return mejorSolucion;
+	}
+
+
+	private int getTiempoMaximo(LinkedList<Procesador> solucionActual) {
+		int tiempoMax = 0;
+		for (Procesador procesador : solucionActual) {
+			tiempoMax = Math.max(tiempoMax, procesador.getTimpoTotalEjecucion());
+		}
+		return tiempoMax;
 	}
 
 }

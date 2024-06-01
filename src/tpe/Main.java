@@ -7,5 +7,6 @@ public class Main {
 		System.out.println(servicios.servicio1("T1"));
 		System.out.println(servicios.servicio2(true));
 		System.out.println(servicios.servicio3(1, 58));
+		System.out.println( "resultado final " + servicios.asignarTareasAProcesadores());
 	}
 }
