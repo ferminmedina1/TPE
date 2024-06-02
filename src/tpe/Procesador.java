@@ -7,6 +7,7 @@ public class Procesador {
     private String cod_procesador;
     private boolean is_refrigerado;
     private int anio_funcionamiento;
+    private static int maxTareasCriticas = 2;
     private LinkedList<Tarea> tareas;
 
     public Procesador(String id_procesador, String cod_procesador, boolean is_refrigerado, int anio_funcionamiento) {
@@ -65,10 +66,22 @@ public class Procesador {
         tareas.remove(tarea);
     }
 
-    public int getTimpoTotalEjecucion() {
+    public int getTiempoTotalEjecucion(Integer tiempoMaxNoRefrigerado) {
         int tiempoTotal = 0;
+        int tareasCriticasEjecutadas = 0;
         for (Tarea tarea : tareas) {
-            tiempoTotal += tarea.getTiempoEjecucion();
+            if(tarea.isCritica())
+                tareasCriticasEjecutadas++;
+
+            if(tareasCriticasEjecutadas <= maxTareasCriticas) { //ningún procesador podrá ejecutar más de 2 tareas críticas.
+                int tiempoTarea = tarea.getTiempoEjecucion();
+                tiempoTotal += tiempoTarea;
+
+                if(!this.is_refrigerado && tiempoTotal > tiempoMaxNoRefrigerado) {
+                    tiempoTotal -= tiempoTarea;
+                }
+                // los procesadores no refrigerados no podrán dedicar más de X tiempo de ejecución a las tareas asignadas.
+            }
         }
         return tiempoTotal;
     }

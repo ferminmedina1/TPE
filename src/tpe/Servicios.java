@@ -2,10 +2,7 @@ package tpe;
 
 import tpe.utils.CSVReader;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * NO modificar la interfaz de esta clase ni sus métodos públicos.
@@ -14,10 +11,9 @@ import java.util.List;
  */
 public class Servicios {
 
-	private HashMap<String, Procesador > procesadores;
-	private HashMap<String, Tarea> tareas;
-	private LinkedList<Tarea> listaTareas;
-	private LinkedList<Procesador> listaProcesadores;
+	private Map<String, Procesador> procesadores;
+	private Map<String, Tarea> tareas;
+	private LinkedList<Tarea> tareasEnProcesador;
 	private LinkedList<Procesador> mejorSolucion;
 	int mejorTiempo;
 
@@ -31,8 +27,7 @@ public class Servicios {
 		reader.readTasks(pathTareas);
 		procesadores = new HashMap<>(reader.getProcesadores());
 		tareas = new HashMap<>(reader.getTareas());
-		listaTareas = new LinkedList<>(reader.getTareas().values());
-		listaProcesadores = new LinkedList<>(reader.getProcesadores().values());
+		tareasEnProcesador = new LinkedList<Tarea>(reader.getTareas().values());
 		mejorTiempo = 0;
 		mejorSolucion = new LinkedList<>();
 	}
@@ -76,20 +71,17 @@ public class Servicios {
 
 	//Parte 2
 
-	public LinkedList<Procesador> asignarTareasAProcesadores() {
-		return asignarTareasAProcesadores(this.listaTareas, 0);
+	public LinkedList<Procesador> asignarTareasAProcesadores(Integer tiempoMaxNoRefrigerado) {
+		return asignarTareasAProcesadores(tareasEnProcesador, 0, tiempoMaxNoRefrigerado);
 	}
 
-	private LinkedList<Procesador> asignarTareasAProcesadores(LinkedList<Tarea> tareas, int indexTarea) {
+	private LinkedList<Procesador> asignarTareasAProcesadores(LinkedList<Tarea> tareas, int indexTarea, int tiempoMaxNoRefrigerado) {
 		if (indexTarea >= tareas.size()) {
-			int tiempoMaximo = getTiempoMaximo(listaProcesadores);
-			if (tiempoMaximo < mejorTiempo || mejorTiempo == 0 ) {
-				mejorTiempo = tiempoMaximo;
+			int tiempoActual = getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado);
+			if (tiempoActual < mejorTiempo || mejorTiempo == 0 ) {
+				mejorTiempo = tiempoActual;
 				mejorSolucion.clear();
-				//debo clonar los procesadores a mi mejorSolucion para guaradar el resultado y que no se pierda
-				for (Procesador procesador : listaProcesadores) {
-					mejorSolucion.add(procesador.clonar());
-				}
+				mejorSolucion = clonarProcesadores(procesadores); //Se clonan los procesadores a la mejorSolucion para guaradar el resultado y que no se pierda
 				System.out.println("Nueva mejor solución encontrada: " + mejorSolucion);
 			}
 			return mejorSolucion;
@@ -97,19 +89,27 @@ public class Servicios {
 
 		Tarea tarea = tareas.get(indexTarea);
 
-		for (Procesador procesador : this.listaProcesadores) {
+		for (Procesador procesador : procesadores.values()) {
 			procesador.addTarea(tarea);
-			asignarTareasAProcesadores(tareas, indexTarea + 1);
+			asignarTareasAProcesadores(tareas, indexTarea + 1,tiempoMaxNoRefrigerado);
 			procesador.deleteTarea(tarea);
 		}
 		return mejorSolucion;
 	}
 
+	private LinkedList<Procesador> clonarProcesadores(Map<String, Procesador> procesadores) {
+		LinkedList<Procesador> clon = new LinkedList<>();
+		for (Procesador procesador : procesadores.values()) {
+			clon.add(procesador.clonar());
+		}
+		return clon;
+	}
 
-	private int getTiempoMaximo(LinkedList<Procesador> solucionActual) {
+
+	private int getTiempoMaximo(Collection<Procesador> solucionActual, Integer tiempoMaxNoRefrigerado) {
 		int tiempoMax = 0;
 		for (Procesador procesador : solucionActual) {
-			tiempoMax = Math.max(tiempoMax, procesador.getTimpoTotalEjecucion());
+			tiempoMax = Math.max(tiempoMax, procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado)); //La función Math.max toma dos argumentos y devuelve el mayor de los dos.
 		}
 		return tiempoMax;
 	}
