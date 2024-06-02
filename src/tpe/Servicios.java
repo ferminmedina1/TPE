@@ -90,12 +90,21 @@ public class Servicios {
 		Tarea tarea = tareas.get(indexTarea);
 
 		for (Procesador procesador : procesadores.values()) {
-			procesador.addTarea(tarea);
-			asignarTareasAProcesadores(tareas, indexTarea + 1,tiempoMaxNoRefrigerado);
-			procesador.deleteTarea(tarea);
+			if (puedeAsignarTarea(procesador, tarea)) {
+				procesador.addTarea(tarea);
+				asignarTareasAProcesadores(tareas, indexTarea + 1,tiempoMaxNoRefrigerado);
+				procesador.deleteTarea(tarea);
+			}
 		}
 		return mejorSolucion;
 	}
+
+	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea) {
+		if (tarea.isCritica()) {
+			procesador.setCriticasPermitidasAlMomento(procesador.getCriticasPermitidasAlMomento() - 1); //preguntar a profesor si esta bien
+		}
+        return procesador.getCriticasPermitidasAlMomento() >= 0;
+    }
 
 	private LinkedList<Procesador> clonarProcesadores(Map<String, Procesador> procesadores) {
 		LinkedList<Procesador> clon = new LinkedList<>();
