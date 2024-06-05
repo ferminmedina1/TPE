@@ -8,9 +8,9 @@ import java.util.Scanner;
 public class Main {
 
 	public static void main(String args[]) {
-		Servicios servicios = new Servicios("../src/tpe/datasets/Procesadores.csv", "../src/tpe/datasets/Tareas.csv");
+		Servicios servicios = new Servicios("./src/tpe/datasets/Procesadores.csv", "./src/tpe/datasets/Tareas.csv");
 		Scanner scanner = new Scanner(System.in);
-
+		/*
 		// Probar Servicio 1
 		System.out.print("Ingrese el ID de la tarea para obtener su información: ");
 		String tareaID = scanner.nextLine().toUpperCase();
@@ -36,10 +36,10 @@ public class Main {
 		int tiempoMaxNoRefrigerado = scanner.nextInt();
 
 		//Integer = tiempoMaximoDeEjecucion.
-		HashMap<Integer, LinkedList<Procesador>> backtracking = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
+		Solucion backtracking = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
 		System.out.println("Asignacion de tareas a procesadores mediante Backtracking. Mejor solución obtenida: " + backtracking);
-
-		HashMap<Integer, LinkedList<Procesador>> greedy = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
+		*/
+		Solucion greedy = servicios.asignarTareasGreedy(50,0);
 		System.out.println("Asignacion de tareas a procesadores mediante Greedy. Mejor solución obtenida: " + greedy);
 	}
 }

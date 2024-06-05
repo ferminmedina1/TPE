@@ -14,8 +14,7 @@ public class Servicios {
 	private Map<String, Procesador> procesadores;
 	private Map<String, Tarea> tareas;
 	private LinkedList<Tarea> tareasEnProcesador;
-	private HashMap<Integer,LinkedList<Procesador>> mejorSolucion;
-	int mejorTiempo;
+	private Solucion mejorSolucion;
 	private int estadosGenerados;
 
 	/*
@@ -29,8 +28,7 @@ public class Servicios {
 		procesadores = new HashMap<>(reader.getProcesadores());
 		tareas = new HashMap<>(reader.getTareas());
 		tareasEnProcesador = new LinkedList<Tarea>(reader.getTareas().values());
-		mejorTiempo = 0;
-		mejorSolucion = new HashMap<Integer,LinkedList<Procesador>>();
+		mejorSolucion = new Solucion();
 	}
 
 	/*
@@ -72,21 +70,20 @@ public class Servicios {
 
 
 	//Parte 2 - Backtracking
-	public HashMap<Integer,LinkedList<Procesador>> asignarTareasBacktracking(Integer tiempoMaxNoRefrigerado) {
-		mejorSolucion.clear();
-		HashMap<Integer,LinkedList<Procesador>> resultado = asignarTareasBacktracking(tareasEnProcesador, 0, tiempoMaxNoRefrigerado);
+	public Solucion asignarTareasBacktracking(Integer tiempoMaxNoRefrigerado) {
+		Solucion resultado = asignarTareasBacktracking(tareasEnProcesador, 0, tiempoMaxNoRefrigerado);
 		System.out.println("Cantidad de estados generados en backtracking: " + estadosGenerados);
 		return resultado;
 	}
 
-	private HashMap<Integer,LinkedList<Procesador>> asignarTareasBacktracking(LinkedList<Tarea> tareas, int indexTarea, int tiempoMaxNoRefrigerado) {
+	private Solucion asignarTareasBacktracking(LinkedList<Tarea> tareas, int indexTarea, int tiempoMaxNoRefrigerado) {
 		estadosGenerados++;
 		if (indexTarea >= tareas.size()) {
 			int tiempoActual = getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado);
-			if (tiempoActual < mejorTiempo || mejorTiempo == 0 ) {
-				mejorTiempo = tiempoActual;
-				mejorSolucion.clear();
-				mejorSolucion.put(mejorTiempo,clonarProcesadores(procesadores)); //Se clonan los procesadores a la mejorSolucion para guaradar el resultado y que no se pierda
+			if (tiempoActual < mejorSolucion.getMejorTiempo() || mejorSolucion.getMejorTiempo() == 0 ) {
+				mejorSolucion.clearSolucion();
+				mejorSolucion.setMejorTiempo(tiempoActual);
+				mejorSolucion.addAll(clonarProcesadores(procesadores));
 			}
 			return mejorSolucion;
 		}
@@ -105,7 +102,7 @@ public class Servicios {
 
 	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, Integer tiempoMaxNoRefrigerado) {
 		// Restriccion 1
-		if (!procesador.isRefrigerado() && procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado) + tarea.getTiempoEjecucion() >= tiempoMaxNoRefrigerado) { // esta bien esta poda?
+		if (!procesador.isRefrigerado() && procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado) + tarea.getTiempoEjecucion() > tiempoMaxNoRefrigerado) { // esta bien esta poda?
 			return false;
 		}
 		// Restriccion 2
@@ -115,33 +112,28 @@ public class Servicios {
 		}
 		return procesador.getCriticasPermitidasAlMomento() >= 0;
 	}
-	//Parte 2 - Greedy (Falta complejidad computacional)
-	public HashMap<Integer,LinkedList<Procesador>> asignarTareasGreedy(Integer tiempoMaxNoRefrigerado) {
-		mejorSolucion.clear();
-		return asignarTareasGreedyPrivate(tiempoMaxNoRefrigerado);
-	}
 
-	private HashMap<Integer, LinkedList<Procesador>> asignarTareasGreedyPrivate(Integer tiempoMaxNoRefrigerado) {
-		List<Procesador> listaProcesadores = new LinkedList<>(procesadores.values());  // determina el mejor candidatos del conjunto a seleccionar
+	//Parte 2 - Greedy Complejidad Polinomica(Falta complejidad computacional) y explicacion de la estrategia
+	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado, Integer indice) {
+		System.out.println("Estado greedy:" + indice++);
 		List<Tarea> listaTareas = new LinkedList<>(tareas.values()); // determina el mejor candidatos del conjunto a seleccionar
-		LinkedList<Procesador> solucionProcesadores = new LinkedList<>(listaProcesadores);
+		mejorSolucion.clearSolucion();
 		int tiempoMaximoEjecucion = 0;
 
 		// Ordenar las tareas por tiempo de ejecución de mayor a menor
-		listaTareas.sort((t1, t2) -> Integer.compare(t2.getTiempoEjecucion(), t1.getTiempoEjecucion()));
+		//listaTareas.sort((t1, t2) -> Integer.compare(t2.getTiempoEjecucion(), t1.getTiempoEjecucion()));
 
 		for (Tarea tarea : listaTareas) {
 			Procesador mejorProcesador = null;
 			int menorTiempoEjecucion = 0;
 
-			for (Procesador procesador : listaProcesadores) {
+			for (Procesador procesador : procesadores.values()) {
 				if (puedeAsignarTarea(procesador, tarea, tiempoMaxNoRefrigerado)) {
 					procesador.addTarea(tarea);
 					int tiempoEjecucion = procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado);
 					if (tiempoEjecucion < menorTiempoEjecucion || menorTiempoEjecucion == 0) {
 						mejorProcesador = procesador;
 						menorTiempoEjecucion = tiempoEjecucion;
-						tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, menorTiempoEjecucion);
 					}
 					procesador.deleteTarea(tarea);
 				}
@@ -153,11 +145,12 @@ public class Servicios {
 					mejorProcesador.setCriticasPermitidasAlMomento(mejorProcesador.getCriticasPermitidasAlMomento() - 1);
 				}
 			}
-			if(!solucionProcesadores.contains(mejorProcesador)) //else, clear y addAll
-				solucionProcesadores.add(mejorProcesador);
+			if(!mejorSolucion.getSolucion().contains(mejorProcesador)){
+				tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, menorTiempoEjecucion);
+				mejorSolucion.setMejorTiempo(tiempoMaximoEjecucion);
+				mejorSolucion.addProcesador(mejorProcesador);
+			}
 		}
-		mejorSolucion.put(tiempoMaximoEjecucion, solucionProcesadores);
-
 		System.out.println("Cantidad de candidatos considerados en greedy: " + listaTareas.size());
 		return mejorSolucion;
 	}
