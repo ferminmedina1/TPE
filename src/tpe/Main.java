@@ -13,7 +13,7 @@ public class Main {
 
 		// Probar Servicio 1
 		System.out.print("Ingrese el ID de la tarea para obtener su información: ");
-		String tareaID = scanner.nextLine();
+		String tareaID = scanner.nextLine().toUpperCase();
 		Tarea tarea = servicios.servicio1(tareaID);
 		System.out.println("Información de la tarea: " + tarea);
 
@@ -35,11 +35,11 @@ public class Main {
 		System.out.print("Ingrese el tiempo máximo de ejecución para procesadores no refrigerados (X): ");
 		int tiempoMaxNoRefrigerado = scanner.nextInt();
 
-		//Integer = tiempoMaximoDeEjecucion. 
+		//Integer = tiempoMaximoDeEjecucion.
 		HashMap<Integer, LinkedList<Procesador>> backtracking = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
 		System.out.println("Asignacion de tareas a procesadores mediante Backtracking. Mejor solución obtenida: " + backtracking);
 
-		HashMap<Integer, LinkedList<Procesador>> greedy = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
+		HashMap<Integer, LinkedList<Procesador>> greedy = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
 		System.out.println("Asignacion de tareas a procesadores mediante Greedy. Mejor solución obtenida: " + greedy);
 	}
 }

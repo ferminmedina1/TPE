@@ -66,19 +66,20 @@ public class Procesador {
         tareas.remove(tarea);
     }
 
-    //Preguntar si esta bien.
+    //Preguntar.
     public int getTiempoTotalEjecucion(Integer tiempoMaxNoRefrigerado) {
         int tiempoTotal = 0;
         for (Tarea tarea : tareas) {
             int tiempoTarea = tarea.getTiempoEjecucion();
-            tiempoTotal += tiempoTarea;
 
-            if(!this.is_refrigerado && tiempoTotal > tiempoMaxNoRefrigerado) {
-                tiempoTotal -= tiempoTarea;
-                //deberiamos de restar el valor de la tarea asi se cancela su tiempo
-                //o deberiamos de convertir tiempoTotal en tiempoMaxNoRefrigerado.
+            /* Si el procesador no está refrigerado y añadir esta tarea excede el tiempo máximo permitido, no la añade.
+            if (!this.isRefrigerado() && (tiempoTotal + tiempoTarea > tiempoMaxNoRefrigerado)) {
+                continue;
             }
             // los procesadores no refrigerados no podrán dedicar más de X tiempo de ejecución a las tareas asignadas.
+            */
+
+            tiempoTotal += tiempoTarea;
         }
         return tiempoTotal;
     }
