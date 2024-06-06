@@ -42,8 +42,7 @@ public class Solucion {
 
     @Override
     public String toString() {
-        return "Solucion con un tiempo de: " + mejorTiempo +
-                ". La lista de procesadores es {" + mapaSolucion +
-                '}';
+        return "Solución obtenida (cada procesador con las tareas asignadas):" + mapaSolucion +
+                "Solución obtenida (tiempo máximo de ejecución): " + mejorTiempo;
     }
 }

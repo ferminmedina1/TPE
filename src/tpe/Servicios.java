@@ -69,9 +69,19 @@ public class Servicios {
 	}
 
 
-	//Parte 2 - Backtracking
+	/* Parte 2 - Backtracking - Exponencial O(a^x)
+
+	a: cantidad de procesadores que tenés para elegir en cada paso.
+	x: cantidad total de tareas que deben ser asignadas.
+
+	En esta tecnica se intentan todas las posibles maneras de asignar tareas
+	a los procesadores. Cada vez que se asigna una tarea se avanza recursivamente
+	hasta que todas las tareas hayan sido asignadas. Retrocediendo cuando se encuentra
+	con una solución que no cumple con las expectativas y guardando la soluciona si
+	es la mas optima al momento (tiempoActual < mejorSolucion.getMejorTiempo())
+	*/
 	public Solucion asignarTareasBacktracking(Integer tiempoMaxNoRefrigerado) {
-		restarEstadosGenerados();
+		vaciarEstados();
 		Solucion resultado = asignarTareasBacktracking(tareasEnProcesador, 0, tiempoMaxNoRefrigerado);
 		System.out.println("Cantidad de estados generados en backtracking: " + estadosGenerados);
 		return resultado;
@@ -102,9 +112,17 @@ public class Servicios {
 	}
 
 
-	//Parte 2 - Greedy Complejidad Polinomica(Falta complejidad computacional) y explicacion de la estrategia
+	//Parte 2 - Greedy Complejidad Polinomica - O(t×p)
+	/*
+	* Este método utiliza la técnica greedy para asignar tareas a procesadores de manera óptima.
+	* En cada paso, intenta asignar la tarea actual al mejor procesador disponible, evaluando
+	* todas las posibles asignaciones. La decisión se toma basándose en cuál procesador minimiza
+	* el tiempo total de ejecución. El método sigue avanzando hasta que todas las tareas están
+	* asignadas y actualiza la mejor solución encontrada si el tiempo de ejecución actual es menor
+	* que el mejor tiempo registrado.
+	* */
 	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado, Integer indice) {
-		restarEstadosGenerados();
+		vaciarEstados();
 		mejorSolucion.clearSolucion();
 
 		int tiempoMaximoEjecucion = 0;
@@ -138,7 +156,7 @@ public class Servicios {
 				mejorSolucion.addProcesador(mejorProcesador);
 			}
 		}
-		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size());
+		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size());//preguntar
 		System.out.println("Cantidad de estados generados en greedy " +estadosGenerados);
 
 		return mejorSolucion;
@@ -146,7 +164,7 @@ public class Servicios {
 
 	//Metodos auxiliares
 
-	public void restarEstadosGenerados() {
+	public void vaciarEstados() {
 		this.estadosGenerados = 0;
 	}
 

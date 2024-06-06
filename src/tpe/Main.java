@@ -38,9 +38,9 @@ public class Main {
 		 */
 		//Integer = tiempoMaximoDeEjecucion.
 		Solucion backtracking = servicios.asignarTareasBacktracking(50);
-		System.out.println("Asignacion de tareas a procesadores mediante Backtracking. Mejor solución obtenida: " + backtracking);
+		System.out.println("Backtracking. Mejor solución obtenida:\n" + backtracking);
 
 		Solucion greedy = servicios.asignarTareasGreedy(50,0);
-		System.out.println("Asignacion de tareas a procesadores mediante Greedy. Mejor solución obtenida: " + greedy);
+		System.out.println("AGreedy. Mejor solución obtenida:\n" + greedy);
 	}
 }
