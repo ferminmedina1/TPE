@@ -101,28 +101,13 @@ public class Servicios {
 		return mejorSolucion;
 	}
 
-	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, Integer tiempoMaxNoRefrigerado) {
-		// Restriccion 1
-		if (!procesador.isRefrigerado() && procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado) + tarea.getTiempoEjecucion() > tiempoMaxNoRefrigerado) { // esta bien esta poda?
-			return false;
-		}
-		// Restriccion 2
-		if (tarea.isCritica() && procesador.getCriticasPermitidasAlMomento() <= 0) {
-			procesador.setCriticasPermitidasAlMomento(procesador.getCriticasPermitidasAlMomento() - 1); //preguntar a profesor si esta bien tener esa constante o es mejor ir llevandola a traves de los adds.
-			return false;
-		}
-		return procesador.getCriticasPermitidasAlMomento() >= 0;
-	}
 
 	//Parte 2 - Greedy Complejidad Polinomica(Falta complejidad computacional) y explicacion de la estrategia
-
 	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado, Integer indice) {
 		restarEstadosGenerados();
 		mejorSolucion.clearSolucion();
-		int tiempoMaximoEjecucion = 0;
 
-		// Ordenar las tareas por tiempo de ejecución de mayor a menor
-		//listaTareas.sort((t1, t2) -> Integer.compare(t2.getTiempoEjecucion(), t1.getTiempoEjecucion()));
+		int tiempoMaximoEjecucion = 0;
 
 		for (Tarea tarea : tareas.values()) {
 			Procesador mejorProcesador = null;
@@ -166,6 +151,20 @@ public class Servicios {
 	}
 
 
+	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, Integer tiempoMaxNoRefrigerado) {
+		// Restriccion 1
+		if (!procesador.isRefrigerado() && procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado) + tarea.getTiempoEjecucion() > tiempoMaxNoRefrigerado) { // esta bien esta poda?
+			return false;
+		}
+		// Restriccion 2
+		if (tarea.isCritica() && procesador.getCriticasPermitidasAlMomento() <= 0) {
+			procesador.setCriticasPermitidasAlMomento(procesador.getCriticasPermitidasAlMomento() - 1); //preguntar a profesor si esta bien tener esa constante o es mejor ir llevandola a traves de los adds.
+			return false;
+		}
+		return procesador.getCriticasPermitidasAlMomento() >= 0;
+	}
+
+
 	private LinkedList<Procesador> clonarProcesadores(Map<String, Procesador> procesadores) {
 		LinkedList<Procesador> clon = new LinkedList<>();
 		for (Procesador procesador : procesadores.values()) {
@@ -182,5 +181,4 @@ public class Servicios {
 		}
 		return tiempoMax;
 	}
-
 }
