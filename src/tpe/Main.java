@@ -35,10 +35,11 @@ public class Main {
 		System.out.print("Ingrese el tiempo máximo de ejecución para procesadores no refrigerados (X): ");
 		int tiempoMaxNoRefrigerado = scanner.nextInt();
 
+		 */
 		//Integer = tiempoMaximoDeEjecucion.
-		Solucion backtracking = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
+		Solucion backtracking = servicios.asignarTareasBacktracking(50);
 		System.out.println("Asignacion de tareas a procesadores mediante Backtracking. Mejor solución obtenida: " + backtracking);
-		*/
+
 		Solucion greedy = servicios.asignarTareasGreedy(50,0);
 		System.out.println("Asignacion de tareas a procesadores mediante Greedy. Mejor solución obtenida: " + greedy);
 	}

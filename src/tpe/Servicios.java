@@ -27,7 +27,7 @@ public class Servicios {
 		reader.readTasks(pathTareas);
 		procesadores = new HashMap<>(reader.getProcesadores());
 		tareas = new HashMap<>(reader.getTareas());
-		tareasEnProcesador = new LinkedList<Tarea>(reader.getTareas().values());
+		tareasEnProcesador = new LinkedList<>(reader.getTareas().values());
 		mejorSolucion = new Solucion();
 	}
 
@@ -71,6 +71,7 @@ public class Servicios {
 
 	//Parte 2 - Backtracking
 	public Solucion asignarTareasBacktracking(Integer tiempoMaxNoRefrigerado) {
+		restarEstadosGenerados();
 		Solucion resultado = asignarTareasBacktracking(tareasEnProcesador, 0, tiempoMaxNoRefrigerado);
 		System.out.println("Cantidad de estados generados en backtracking: " + estadosGenerados);
 		return resultado;
@@ -114,16 +115,16 @@ public class Servicios {
 	}
 
 	//Parte 2 - Greedy Complejidad Polinomica(Falta complejidad computacional) y explicacion de la estrategia
+
 	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado, Integer indice) {
-		System.out.println("Estado greedy:" + indice++);
-		List<Tarea> listaTareas = new LinkedList<>(tareas.values()); // determina el mejor candidatos del conjunto a seleccionar
+		restarEstadosGenerados();
 		mejorSolucion.clearSolucion();
 		int tiempoMaximoEjecucion = 0;
 
 		// Ordenar las tareas por tiempo de ejecución de mayor a menor
 		//listaTareas.sort((t1, t2) -> Integer.compare(t2.getTiempoEjecucion(), t1.getTiempoEjecucion()));
 
-		for (Tarea tarea : listaTareas) {
+		for (Tarea tarea : tareas.values()) {
 			Procesador mejorProcesador = null;
 			int menorTiempoEjecucion = 0;
 
@@ -137,6 +138,7 @@ public class Servicios {
 					}
 					procesador.deleteTarea(tarea);
 				}
+				estadosGenerados++;
 			}
 
 			if (mejorProcesador != null) {
@@ -151,9 +153,18 @@ public class Servicios {
 				mejorSolucion.addProcesador(mejorProcesador);
 			}
 		}
-		System.out.println("Cantidad de candidatos considerados en greedy: " + listaTareas.size());
+		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size());
+		System.out.println("Cantidad de estados generados en greedy " +estadosGenerados);
+
 		return mejorSolucion;
 	}
+
+	//Metodos auxiliares
+
+	public void restarEstadosGenerados() {
+		this.estadosGenerados = 0;
+	}
+
 
 	private LinkedList<Procesador> clonarProcesadores(Map<String, Procesador> procesadores) {
 		LinkedList<Procesador> clon = new LinkedList<>();

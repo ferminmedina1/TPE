@@ -3,16 +3,16 @@ package tpe;
 import java.util.LinkedList;
 
 public class Solucion {
-    private LinkedList<Procesador> solucion;
+    private LinkedList<Procesador> mapaSolucion;
     private Integer mejorTiempo;
 
     public Solucion() {
-        this.solucion = new LinkedList<>();
+        this.mapaSolucion = new LinkedList<>();
         this.mejorTiempo = 0;
     }
 
     public LinkedList<Procesador> getSolucion() {
-        return solucion;
+        return mapaSolucion;
     }
 
     public Integer getMejorTiempo() {
@@ -24,26 +24,26 @@ public class Solucion {
     }
 
     public void addProcesador(Procesador p1) {
-        if (!solucion.contains(p1)) {
-            solucion.add(p1);
+        if (!mapaSolucion.contains(p1)) {
+            mapaSolucion.add(p1);
         }
     }
 
     public void addAll(LinkedList<Procesador> procesadores) {
-        solucion.clear();
-        solucion.addAll(procesadores);
+        mapaSolucion.clear();
+        mapaSolucion.addAll(procesadores);
     }
 
 
     public void clearSolucion() {
         this.mejorTiempo = 0;
-        this.solucion.clear();
+        this.mapaSolucion.clear();
     }
 
     @Override
     public String toString() {
         return "Solucion con un tiempo de: " + mejorTiempo +
-                ". La lista de procesadores es {" + solucion +
+                ". La lista de procesadores es {" + mapaSolucion +
                 '}';
     }
 }
