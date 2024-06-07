@@ -40,7 +40,7 @@ public class Main {
 		Solucion backtracking = servicios.asignarTareasBacktracking(50);
 		System.out.println("Backtracking. Mejor solución obtenida:\n" + backtracking);
 
-		Solucion greedy = servicios.asignarTareasGreedy(50,0);
+		Solucion greedy = servicios.asignarTareasGreedy(50);
 		System.out.println("AGreedy. Mejor solución obtenida:\n" + greedy);
 	}
 }

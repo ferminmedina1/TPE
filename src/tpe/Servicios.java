@@ -91,11 +91,9 @@ public class Servicios {
 		estadosGenerados++;
 		if (indexTarea >= tareas.size()) {
 			int tiempoActual = getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado);
-			if (tiempoActual < mejorSolucion.getMejorTiempo() || mejorSolucion.getMejorTiempo() == 0 ) {
-				mejorSolucion.clearSolucion();
-				mejorSolucion.setMejorTiempo(tiempoActual);
-				mejorSolucion.addAll(clonarProcesadores(procesadores));
-			}
+			mejorSolucion.clearSolucion();
+			mejorSolucion.setMejorTiempo(tiempoActual);
+			mejorSolucion.addAll(clonarProcesadores(procesadores));
 			return mejorSolucion;
 		}
 
@@ -104,7 +102,8 @@ public class Servicios {
 		for (Procesador procesador : procesadores.values()) {
 			if (puedeAsignarTarea(procesador, tarea, tiempoMaxNoRefrigerado)) {
 				procesador.addTarea(tarea);
-				asignarTareasBacktracking(tareas, indexTarea + 1,tiempoMaxNoRefrigerado);
+				if (getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado) < mejorSolucion.getMejorTiempo() || mejorSolucion.getMejorTiempo() == 0 )
+					asignarTareasBacktracking(tareas, indexTarea + 1,tiempoMaxNoRefrigerado);
 				procesador.deleteTarea(tarea);
 			}
 		}
@@ -121,7 +120,7 @@ public class Servicios {
 	* asignadas y actualiza la mejor solución encontrada si el tiempo de ejecución actual es menor
 	* que el mejor tiempo registrado.
 	* */
-	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado, Integer indice) {
+	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado) {
 		vaciarEstados();
 		mejorSolucion.clearSolucion();
 
@@ -151,13 +150,13 @@ public class Servicios {
 				}
 			}
 			if(!mejorSolucion.getSolucion().contains(mejorProcesador)){
-				tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, menorTiempoEjecucion);
-				mejorSolucion.setMejorTiempo(tiempoMaximoEjecucion);
 				mejorSolucion.addProcesador(mejorProcesador);
 			}
+			tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, menorTiempoEjecucion);
+			mejorSolucion.setMejorTiempo(tiempoMaximoEjecucion);
 		}
 		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size());//preguntar
-		System.out.println("Cantidad de estados generados en greedy " +estadosGenerados);
+		System.out.println("Cantidad de estados generados en greedy " + estadosGenerados);
 
 		return mejorSolucion;
 	}
