@@ -90,9 +90,9 @@ public class Servicios {
 	private Solucion asignarTareasBacktracking(LinkedList<Tarea> tareas, int indexTarea, int tiempoMaxNoRefrigerado) {
 		estadosGenerados++;
 		if (indexTarea >= tareas.size()) {
-			int tiempoActual = getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado);
 			mejorSolucion.clearSolucion();
-			mejorSolucion.setMejorTiempo(tiempoActual);
+			mejorSolucion.clearSolucion();
+			mejorSolucion.setMayorTiempo(getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado));
 			mejorSolucion.addAll(clonarProcesadores(procesadores));
 			return mejorSolucion;
 		}
@@ -123,28 +123,13 @@ public class Servicios {
 	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado) {
 		vaciarEstados();
 		mejorSolucion.clearSolucion();
-
 		int tiempoMaximoEjecucion = 0;
 
 		for (Tarea tarea : tareas.values()) {
-			Procesador mejorProcesador = null;
-			int menorTiempoEjecucion = 0;
-
-			for (Procesador procesador : procesadores.values()) {
-				if (puedeAsignarTarea(procesador, tarea, tiempoMaxNoRefrigerado)) {
-					procesador.addTarea(tarea);
-					int tiempoEjecucion = procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado);
-					if (tiempoEjecucion < menorTiempoEjecucion || menorTiempoEjecucion == 0) {
-						mejorProcesador = procesador;
-						menorTiempoEjecucion = tiempoEjecucion;
-					}
-					procesador.deleteTarea(tarea);
-				}
-				estadosGenerados++;
-			}
-
+			Procesador mejorProcesador = encontrarMejorProcesador(tarea,tiempoMaxNoRefrigerado);
 			if (mejorProcesador != null) {
 				mejorProcesador.addTarea(tarea);
+				tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, mejorProcesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado));
 				if (tarea.isCritica()) {
 					mejorProcesador.setCriticasPermitidasAlMomento(mejorProcesador.getCriticasPermitidasAlMomento() - 1);
 				}
@@ -152,13 +137,25 @@ public class Servicios {
 			if(!mejorSolucion.getSolucion().contains(mejorProcesador)){
 				mejorSolucion.addProcesador(mejorProcesador);
 			}
-			tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, menorTiempoEjecucion);
-			mejorSolucion.setMejorTiempo(tiempoMaximoEjecucion);
+			mejorSolucion.setMayorTiempo(tiempoMaximoEjecucion);
 		}
-		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size());//preguntar
-		System.out.println("Cantidad de estados generados en greedy " + estadosGenerados);
-
+		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size() * procesadores.size());
 		return mejorSolucion;
+	}
+
+	private Procesador encontrarMejorProcesador(Tarea tarea, Integer tiempoMaxNoRefrigerado) {
+		int menorTiempoEjecucion = Integer.MAX_VALUE;
+		Procesador mejorProcesador = null;
+		for (Procesador procesador : procesadores.values()) {
+			if (puedeAsignarTarea(procesador, tarea, tiempoMaxNoRefrigerado)) {
+				int tiempoEjecucion = procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado);
+				if (tiempoEjecucion < menorTiempoEjecucion) {
+					mejorProcesador = procesador;
+					menorTiempoEjecucion = tiempoEjecucion;
+				}
+			}
+		}
+		return mejorProcesador;
 	}
 
 	//Metodos auxiliares

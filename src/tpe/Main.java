@@ -10,7 +10,7 @@ public class Main {
 	public static void main(String args[]) {
 		Servicios servicios = new Servicios("./src/tpe/datasets/Procesadores.csv", "./src/tpe/datasets/Tareas.csv");
 		Scanner scanner = new Scanner(System.in);
-		/*
+
 		// Probar Servicio 1
 		System.out.print("Ingrese el ID de la tarea para obtener su información: ");
 		String tareaID = scanner.nextLine().toUpperCase();
@@ -35,12 +35,10 @@ public class Main {
 		System.out.print("Ingrese el tiempo máximo de ejecución para procesadores no refrigerados (X): ");
 		int tiempoMaxNoRefrigerado = scanner.nextInt();
 
-		 */
-		//Integer = tiempoMaximoDeEjecucion.
-		Solucion backtracking = servicios.asignarTareasBacktracking(50);
+		Solucion backtracking = servicios.asignarTareasBacktracking(tiempoMaxNoRefrigerado);
 		System.out.println("Backtracking. Mejor solución obtenida:\n" + backtracking);
 
-		Solucion greedy = servicios.asignarTareasGreedy(50);
-		System.out.println("AGreedy. Mejor solución obtenida:\n" + greedy);
+		Solucion greedy = servicios.asignarTareasGreedy(tiempoMaxNoRefrigerado);
+		System.out.println("Greedy. Mejor solución obtenida:\n" + greedy);
 	}
 }

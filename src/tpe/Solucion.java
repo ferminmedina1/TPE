@@ -19,7 +19,7 @@ public class Solucion {
         return mejorTiempo;
     }
 
-    public void setMejorTiempo(Integer mejorTiempo) {
+    public void setMayorTiempo(Integer mejorTiempo) {
         this.mejorTiempo = mejorTiempo;
     }
 
