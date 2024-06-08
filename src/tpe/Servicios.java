@@ -68,18 +68,17 @@ public class Servicios {
 		return tareasFiltradas;
 	}
 
-
-	/* Parte 2 - Backtracking - Exponencial O(a^x)
-
-	a: cantidad de procesadores que tenés para elegir en cada paso.
-	x: cantidad total de tareas que deben ser asignadas.
-
-	En esta tecnica se intentan todas las posibles maneras de asignar tareas
-	a los procesadores. Cada vez que se asigna una tarea se avanza recursivamente
-	hasta que todas las tareas hayan sido asignadas. Retrocediendo cuando se encuentra
-	con una solución que no cumple con las expectativas y guardando la soluciona si
-	es la mas optima al momento (tiempoActual < mejorSolucion.getMejorTiempo())
-	*/
+	//Parte 2 - Backtracking - Exponencial O(a^x)
+	/*
+	* a: cantidad de procesadores que tenés para elegir en cada paso.
+	* x: cantidad total de tareas que deben ser asignadas.
+	*
+	* En esta tecnica se intentan buscar todas las posibles maneras de asignar tareas
+	* a procesadores. Cada vez que se asigna una tarea se avanza recursivamente
+	* hasta que todas las tareas hayan sido asignadas (caso base). Tambien hay una poda,
+	* la cual controla que se siga buscando una mejor solucion siempre y cuando el mayor tiempo
+	* de ejecucion hasta el moemnto sea menor al de la mejor solucion encontrada.
+	* */
 	public Solucion asignarTareasBacktracking(Integer tiempoMaxNoRefrigerado) {
 		vaciarEstados();
 		Solucion resultado = asignarTareasBacktracking(tareasEnProcesador, 0, tiempoMaxNoRefrigerado);
@@ -91,8 +90,7 @@ public class Servicios {
 		estadosGenerados++;
 		if (indexTarea >= tareas.size()) {
 			mejorSolucion.clearSolucion();
-			mejorSolucion.clearSolucion();
-			mejorSolucion.setMayorTiempo(getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado));
+			mejorSolucion.setMayorTiempo(getTiempoMaximo(procesadores.values()));
 			mejorSolucion.addAll(clonarProcesadores(procesadores));
 			return mejorSolucion;
 		}
@@ -102,7 +100,8 @@ public class Servicios {
 		for (Procesador procesador : procesadores.values()) {
 			if (puedeAsignarTarea(procesador, tarea, tiempoMaxNoRefrigerado)) {
 				procesador.addTarea(tarea);
-				if (getTiempoMaximo(procesadores.values(), tiempoMaxNoRefrigerado) < mejorSolucion.getMejorTiempo() || mejorSolucion.getMejorTiempo() == 0 )
+				//poda
+				if (getTiempoMaximo(procesadores.values()) < mejorSolucion.getMejorTiempo() || mejorSolucion.getMejorTiempo() == 0 )
 					asignarTareasBacktracking(tareas, indexTarea + 1,tiempoMaxNoRefrigerado);
 				procesador.deleteTarea(tarea);
 			}
@@ -114,11 +113,8 @@ public class Servicios {
 	//Parte 2 - Greedy Complejidad Polinomica - O(t×p)
 	/*
 	* Este método utiliza la técnica greedy para asignar tareas a procesadores de manera óptima.
-	* En cada paso, intenta asignar la tarea actual al mejor procesador disponible, evaluando
-	* todas las posibles asignaciones. La decisión se toma basándose en cuál procesador minimiza
-	* el tiempo total de ejecución. El método sigue avanzando hasta que todas las tareas están
-	* asignadas y actualiza la mejor solución encontrada si el tiempo de ejecución actual es menor
-	* que el mejor tiempo registrado.
+	* En cada paso, intenta asignar la tarea actual al mejor procesador disponible (el de menor tiempo de ejecucion).
+	* El método sigue avanzando hasta que se asignan todas las tareas.
 	* */
 	public Solucion asignarTareasGreedy(Integer tiempoMaxNoRefrigerado) {
 		vaciarEstados();
@@ -129,26 +125,26 @@ public class Servicios {
 			Procesador mejorProcesador = encontrarMejorProcesador(tarea,tiempoMaxNoRefrigerado);
 			if (mejorProcesador != null) {
 				mejorProcesador.addTarea(tarea);
-				tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, mejorProcesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado));
+				tiempoMaximoEjecucion = Math.max(tiempoMaximoEjecucion, mejorProcesador.getTiempoTotalEjecucion());
 				if (tarea.isCritica()) {
 					mejorProcesador.setCriticasPermitidasAlMomento(mejorProcesador.getCriticasPermitidasAlMomento() - 1);
 				}
 			}
-			if(!mejorSolucion.getSolucion().contains(mejorProcesador)){
-				mejorSolucion.addProcesador(mejorProcesador);
-			}
+			mejorSolucion.addProcesador(mejorProcesador);
 			mejorSolucion.setMayorTiempo(tiempoMaximoEjecucion);
 		}
 		System.out.println("Cantidad de candidatos considerados en greedy: " + tareas.size() * procesadores.size());
 		return mejorSolucion;
 	}
 
+	//Metodos auxiliares
+
 	private Procesador encontrarMejorProcesador(Tarea tarea, Integer tiempoMaxNoRefrigerado) {
 		int menorTiempoEjecucion = Integer.MAX_VALUE;
 		Procesador mejorProcesador = null;
 		for (Procesador procesador : procesadores.values()) {
 			if (puedeAsignarTarea(procesador, tarea, tiempoMaxNoRefrigerado)) {
-				int tiempoEjecucion = procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado);
+				int tiempoEjecucion = procesador.getTiempoTotalEjecucion();
 				if (tiempoEjecucion < menorTiempoEjecucion) {
 					mejorProcesador = procesador;
 					menorTiempoEjecucion = tiempoEjecucion;
@@ -158,8 +154,6 @@ public class Servicios {
 		return mejorProcesador;
 	}
 
-	//Metodos auxiliares
-
 	public void vaciarEstados() {
 		this.estadosGenerados = 0;
 	}
@@ -167,12 +161,12 @@ public class Servicios {
 
 	private boolean puedeAsignarTarea(Procesador procesador, Tarea tarea, Integer tiempoMaxNoRefrigerado) {
 		// Restriccion 1
-		if (!procesador.isRefrigerado() && procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado) + tarea.getTiempoEjecucion() > tiempoMaxNoRefrigerado) { // esta bien esta poda?
+		if (!procesador.isRefrigerado() && procesador.getTiempoTotalEjecucion() + tarea.getTiempoEjecucion() > tiempoMaxNoRefrigerado) {
 			return false;
 		}
 		// Restriccion 2
 		if (tarea.isCritica() && procesador.getCriticasPermitidasAlMomento() <= 0) {
-			procesador.setCriticasPermitidasAlMomento(procesador.getCriticasPermitidasAlMomento() - 1); //preguntar a profesor si esta bien tener esa constante o es mejor ir llevandola a traves de los adds.
+			procesador.setCriticasPermitidasAlMomento(procesador.getCriticasPermitidasAlMomento() - 1);
 			return false;
 		}
 		return procesador.getCriticasPermitidasAlMomento() >= 0;
@@ -188,10 +182,11 @@ public class Servicios {
 	}
 
 
-	private int getTiempoMaximo(Collection<Procesador> solucionActual, Integer tiempoMaxNoRefrigerado) {
+	private int getTiempoMaximo(Collection<Procesador> solucionActual) {
 		int tiempoMax = 0;
 		for (Procesador procesador : solucionActual) {
-			tiempoMax = Math.max(tiempoMax, procesador.getTiempoTotalEjecucion(tiempoMaxNoRefrigerado)); //La función Math.max toma dos argumentos y devuelve el mayor de los dos.
+			//buscar el procesador con el mayor tiempo de ejecucion
+			tiempoMax = Math.max(tiempoMax, procesador.getTiempoTotalEjecucion());
 		}
 		return tiempoMax;
 	}

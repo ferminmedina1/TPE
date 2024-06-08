@@ -67,7 +67,7 @@ public class Procesador {
     }
 
     //Preguntar.
-    public int getTiempoTotalEjecucion(Integer tiempoMaxNoRefrigerado) {
+    public int getTiempoTotalEjecucion() {
         int tiempoTotal = 0;
         for (Tarea tarea : tareas) {
             int tiempoTarea = tarea.getTiempoEjecucion();
