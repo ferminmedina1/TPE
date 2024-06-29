@@ -9,7 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 
 
 public class CSVReader {
@@ -94,5 +94,15 @@ public class CSVReader {
 		
 		return lines;
 	}
-	
+
+	public void setTareasNoCriticasYCriticas(List<Tarea> tareasCriticas, List<Tarea> tareasNoCriticas) {
+		for (Tarea t: tareas.values()) {
+			if(t.isCritica()){
+				tareasCriticas.add(t);
+			}
+			if(!t.isCritica()){
+				tareasNoCriticas.add(t);
+			}
+		}
+	}
 }

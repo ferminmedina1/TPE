@@ -1,6 +1,6 @@
 package tpe;
 
-public class Tarea {
+public class Tarea implements Comparable<Tarea>{
     private String id_tarea;
     private String nombre_tarea;
     private int tiempo_ejecucion;
@@ -13,6 +13,11 @@ public class Tarea {
         this.nombre_tarea = nombre_tarea;
         this.tiempo_ejecucion = tiempo_ejecucion;
         this.critica = critica;
+        this.nivel_prioridad = nivel_prioridad;
+    }
+
+
+    public Tarea(int nivel_prioridad) {
         this.nivel_prioridad = nivel_prioridad;
     }
 
@@ -65,6 +70,10 @@ public class Tarea {
                 ", critica=" + critica +
                 ", nivel_prioridad=" + nivel_prioridad +
                 '}';
+    }
+    @Override
+    public int compareTo(Tarea o) {
+        return Integer.compare(this.nivel_prioridad, o.nivel_prioridad);
     }
 }
 
