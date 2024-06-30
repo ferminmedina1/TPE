@@ -30,13 +30,13 @@ public class Servicios {
 		reader.readTasks(pathTareas);
 		procesadores = new HashMap<>(reader.getProcesadores());
 		tareas = new HashMap<>(reader.getTareas());
-		tareasPorPrioridad = new ArrayList<>(tareas.values());
-		Collections.sort(tareasPorPrioridad);
-		tareasNoCriticas = new ArrayList<>();
-		tareasCriticas = new ArrayList<>();
-		reader.setTareasNoCriticasYCriticas(tareasCriticas, tareasNoCriticas);
+		tareasPorPrioridad = new LinkedList<>(tareas.values());
+		tareasNoCriticas = new LinkedList<>();
+		tareasCriticas = new LinkedList<>();
 		tareasEnProcesador = new LinkedList<>(reader.getTareas().values());
 		mejorSolucion = new Solucion();
+		reader.setTareasNoCriticasYCriticas(tareasCriticas, tareasNoCriticas);
+		Collections.sort(tareasPorPrioridad); //ordeno las tareas por nivel de prioridad
 	}
 
 	/*
@@ -49,7 +49,7 @@ public class Servicios {
 
 	/*
 	 * Complejidad:
-	 * O(n) donde n es el número total de tareas.
+	 * O(1)
 	 */
 	public List<Tarea> servicio2(boolean esCritica) {
 		if(esCritica)
@@ -60,17 +60,17 @@ public class Servicios {
 
 	/*
      * Complejidad:
-     * la complejidad final en el peor de los casos para el método servicio3 es: 𝑂(𝑛)
-     * donde 𝑛 es el número total de tareas en tareasPorPrioridad.
-     * Esto se debe a que, en el peor escenario, la búsqueda binaria (𝑂(log 𝑛)) y la iteración (𝑂(𝑛))
+     * la complejidad final en el peor de los casos para el método servicio3 es: O(N)
+     * donde N es el número total de tareas en tareasPorPrioridad.
+     * Esto se debe a que, en el peor escenario, la búsqueda binaria (O(log n)) y la iteración (O(log n))
      * contribuyen significativamente a la complejidad total, y la iteración podría dominar en términos de
-     * tiempo de ejecución cuando 𝑛 es suficientemente grande.
+     * tiempo de ejecución cuando N es suficientemente grande.
      */
 	public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
 		List<Tarea> tareasFiltradas = new LinkedList<>();
 
-		// Buscamos la posición en la lista de la primera tarea que tiene una prioridad mayor o igual a la prioridadInferior
-		// Esto se hace usando una técnica llamada "búsqueda binaria" que es muy eficiente
+		// Buscamos la posición en la lista de la primera tarea que tiene una prioridad mayor o igual a la prioridadInferior pasada por paremtros.
+		// Utilizamos la tecnica busqueda binaria
 		int inicio = Collections.binarySearch(tareasPorPrioridad, new Tarea(prioridadInferior), Comparator.comparingInt(Tarea::getNivelprioridad));
 
 		// Si no se encuentra una tarea exacta, la búsqueda binaria devuelve un valor negativo.
@@ -80,7 +80,6 @@ public class Servicios {
 		}
 
 		// Buscamos la posición en la lista de la primera tarea que tiene una prioridad mayor que la prioridadSuperior
-		// Usamos prioridadSuperior + 1 para asegurarnos de encontrar la primera tarea con prioridad mayor.
 		int fin = Collections.binarySearch(tareasPorPrioridad, new Tarea(prioridadSuperior), Comparator.comparingInt(Tarea::getNivelprioridad));
 
 		// Si no se encuentra una tarea exacta, la búsqueda binaria devuelve un valor negativo.
@@ -89,13 +88,12 @@ public class Servicios {
 			fin = -fin - 1;
 		}
 
-		// Ahora recorremos todas las tareas desde el índice de inicio hasta el índice de fin (sin incluir fin)
+		// Recorremos todas las tareas desde el índice de inicio hasta el índice de fin (sin incluir fin)
 		// y las añadimos a la lista de tareas filtradas.
 		for (int i = inicio; i < fin; i++) {
 			tareasFiltradas.add(tareasPorPrioridad.get(i));
 		}
 
-		// Finalmente, devolvemos la lista de tareas que están dentro del rango de prioridad especificado
 		return tareasFiltradas;
 	}
 
@@ -169,6 +167,7 @@ public class Servicios {
 	}
 
 	//Metodos auxiliares
+
 	private Procesador encontrarMejorProcesador(Tarea tarea, Integer tiempoMaxNoRefrigerado) {
 		int menorTiempoEjecucion = Integer.MAX_VALUE;
 		Procesador mejorProcesador = null;

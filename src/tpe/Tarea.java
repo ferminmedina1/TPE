@@ -62,6 +62,11 @@ public class Tarea implements Comparable<Tarea>{
     }
 
     @Override
+    public int compareTo(Tarea t) {
+        return Integer.compare(this.nivel_prioridad, t.nivel_prioridad);
+    }
+
+    @Override
     public String toString() {
         return "Tarea{" +
                 "id_tarea='" + id_tarea + '\'' +
@@ -70,10 +75,6 @@ public class Tarea implements Comparable<Tarea>{
                 ", critica=" + critica +
                 ", nivel_prioridad=" + nivel_prioridad +
                 '}';
-    }
-    @Override
-    public int compareTo(Tarea o) {
-        return Integer.compare(this.nivel_prioridad, o.nivel_prioridad);
     }
 }
 
